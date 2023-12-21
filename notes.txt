@@ -1,0 +1,46 @@
+AsmDumpPass asm-dump --asm-dump Dumps BinaryFunctions into assembly
+FixRelaxations fix-relaxations isAArch64() locates instructions with wrong targets and fixes them
+VeneerElimination veneer-elimination (--elim-link-veneers & isAArch64()) removes linker-inserted veneers
+PrintProgramStats print-stats - Prints a list of the top 100 functions sorted by a set of dyno stats categories
+PrintProfileStats profile-stats --print-profile-stats Compute and report to the user the imbalance in flow equations for all CFGs, so we can detect bad quality profile.
+ValidateInternalCalls validate-internal-calls isX86() Post-processing for internal calls.
+ValidateMemRefs validate-mem-refs isX86() Post processing to check for memory references that cause a symbol in data section to be ambiguous
+Instrumentation instrumentation --instrument This is an instrumentation pass that modifies the input binary to generate a profile after execution finishes
+HugePage HugePage --hugify Automatically put hot code on 2MB page(s) (hugify) at runtime. 
+ShortenInstructions shorten-instructions isX86() Convert instructions to the form with the minimum operand width.
+RemoveNops remove-nops not --keep-nops (default is to remove) Pass to remove nops in code
+NormalizeCFG normalize CFG - The pass normalizes CFG by performing the following transformations: * removes empty basic blocks * merges duplicate edges and updates jump instructions
+StripRepRet strip-rep-ret --strip-rep-ret (default: true) Pass for stripping 'repz' from 'repz retq' sequence of instructions.
+IdenticalCodeFolding identical-code-folding --icf An optimization that replaces references to identical functions with references to a single one of them.
+SpecializeMemcpy1 specialize-memcpy (--memcpy1-spec & isX86()) list of functions with call sites for which to specialize memcpy() for size 1
+InlineMemcpy inline-memcpy (--inline-memcpy & isX86()) inline memcpy using 'rep movsb' instruction (X86-only)
+IndirectCallPromotion indirect-call-promotion --indirect-call-promotion != none (default: none) The indirect call promotion pass visits each indirect call and examines a branch profile for each. If the most frequent targets from that callsite exceed the specified threshold (default 90%), the call is promoted. Otherwise, it is ignored.
+PLTCall "PLT call optimization" --plt != none "replaces calls to PLT entries with indirect calls against GOT."
+ThreeWayBranch "three way branch" --three-way-branch "Pass for optimizing a three way branch namely a single comparison and 2 conditional jumps by reordering blocks, replacing successors, and replacing jump conditions and destinations"
+ReorderBasicBlocks reorder-blocks --reorder-blocks != none "Reorder the basic blocks for each function based on hotness."
+EliminateUnreachableBlocks eliminate-unreachable --eliminate-unreachable (default: true) "Detect and eliminate unreachable basic blocks. We could have those filled with nops and they are used for alignment."
+SplitFunctions "split-functions" --split-functions "Split each function into a hot and cold fragment using profiling information."
+LoopInversionPass "loop-inversion-opt" (--loop-inversion-opt (default: true) & --reorder-blocks != none) "Reorders BB loops to use only 1 unconditional jump"  
+TailDuplication "tail duplication" --tail-duplication != none "The advantage is getting rid of an unconditional branch and hopefully to improve i-cache performance by reducing fragmentation The disadvantage is that if there is too much code duplication, we may end up evicting hot cache lines and causing the opposite effect, hurting i-cache performance This needs to be well balanced to achieve the optimal effect"
+CMOVConversion "CMOV conversion" --cmov-conversion "Replace conditional jumps with cmov"
+FixupBranches fix-branches - "Sync local branches with CFG."
+ReorderFunctions reorder-functions --reorder-functions != none "reorder and cluster functions (works only with relocations)"
+SplitFunctions (2nd)
+DynoStatsPrintPass "print dyno-stats after optimizations" (--dyno-stats or --dyno-stats-all) "A pass to print program-wide dynostats."
+StokeInfo stoke-get-stat --stoke "Add the StokeInfo pass, which extract functions for stoke optimization"
+SimplifyConditionalTailCalls simplify-conditional-tail-calls (--simplify-conditional-tail-calls (default: true) & isX86()) "This pass introduces conditional jumps into external functions."
+Peepholes peepholes --peepholes != none "Perform simple peephole optimizations."
+AlignerPass aligner - "Aligner class, which provides alignment for code, e.g. basic block and functions, with the goal to achieve the optimal performance."
+ReorderData reorder-data --reorder-data "Perform reordering on data contained in one or more sections using memory profiling data."
+ADRRelaxationPass adr-relaxation (--adr-relaxation & isAArch64()) "This file declares the ADRRelaxationPass class, which replaces AArch64 non-local ADR instructions with ADRP + ADD due to small offset range of ADR instruction (+- 1MB) which could be easily overflowed after BOLT optimizations. Such problems are usually connected with errata 843419 https://developer.arm.com/documentation/epm048406/2100/ The linker could replace ADRP instruction with ADR in some cases."
+LongJmpPass long-jmp isAArch64() "LongJmp is veneer-insertion pass originally written for AArch64 that compensates for its short-range branches, typically done during linking. We pull this pass inside BOLT because here we can do a better job at stub inserting by manipulating the CFG, something linkers can't do."
+FinalizeFunctions finalize-functions - "Fix the CFI state and exception handling information after all other passes have completed."
+FrameOptimizerPass frame-optimizer --frame-opt != none "FrameOptimizerPass strives for removing or moving stack frame accesses to less frequently executed basic blocks, reducing the pressure on icache usage as well as dynamic instruction count."
+AllocCombinerPass alloc-combiner --frame-opt != none
+RetpolineInsertion retpoline-insertion --insert-retpolines "This file implements RetpolineInsertion class, which replaces indirect branches (calls and jumps) with calls to retpolines to protect against branch target injection attacks."
+AssignSections assign-sections - "Assign output sections to all functions."
+PatchEntries patch-entries --force-patch "Pass for patching original function entry points."
+InstructionLowering inst-lowering - "Pass for lowering any instructions that we have raised and that have to be lowered."
+CheckLargeFunctions check-large-functions "not --update-debug-sections" "Perform any necessary adjustments for functions that do not fit into their original space in non-relocation mode."
+LowerAnnotations lower-annotations - "Convert and remove all BOLT-related annotations before LLVM code emission."
+CleanMCState clean-mc-state - "Check for dirty state of MCSymbols caused by running calculateEmittedSize in parallel and restore them"
