@@ -131,6 +131,11 @@ static cl::opt<bool>
                     cl::desc("dump CFG of functions with unknown control flow"),
                     cl::cat(BoltCategory), cl::ReallyHidden);
 
+static cl::opt<bool>
+    NoNormalizeCFG("no-normalize-cfg",
+                      cl::desc("no-normalize-cfg"),
+                      cl::init(false), cl::cat(BoltOptCategory));
+
 // Please MSVC19 with a forward declaration: otherwise it reports an error about
 // an undeclared variable inside a callback.
 extern cl::opt<bolt::ReorderBasicBlocks::LayoutType> ReorderBlocks;
@@ -302,18 +307,20 @@ void NormalizeCFG::runOnFunction(BinaryFunction &BF) {
 }
 
 void NormalizeCFG::runOnFunctions(BinaryContext &BC) {
+  if (!opts::NoNormalizeCFG) {
   ParallelUtilities::runOnEachFunction(
       BC, ParallelUtilities::SchedulingPolicy::SP_BB_LINEAR,
       [&](BinaryFunction &BF) { runOnFunction(BF); },
       [&](const BinaryFunction &BF) { return !shouldOptimize(BF); },
       "NormalizeCFG");
-  if (NumBlocksRemoved)
-    outs() << "BOLT-INFO: removed " << NumBlocksRemoved << " empty block"
-           << (NumBlocksRemoved == 1 ? "" : "s") << '\n';
-  if (NumDuplicateEdgesMerged)
-    outs() << "BOLT-INFO: merged " << NumDuplicateEdgesMerged
-           << " duplicate CFG edge" << (NumDuplicateEdgesMerged == 1 ? "" : "s")
-           << '\n';
+  }
+  // if (NumBlocksRemoved)
+  outs() << "BOLT-INFO: removed " << NumBlocksRemoved << " empty block"
+          << (NumBlocksRemoved == 1 ? "" : "s") << '\n';
+  // if (NumDuplicateEdgesMerged)
+  outs() << "BOLT-INFO: merged " << NumDuplicateEdgesMerged
+          << " duplicate CFG edge" << (NumDuplicateEdgesMerged == 1 ? "" : "s")
+          << '\n';
 }
 
 void EliminateUnreachableBlocks::runOnFunction(BinaryFunction &Function) {
@@ -358,7 +365,7 @@ void EliminateUnreachableBlocks::runOnFunctions(BinaryContext &BC) {
       BC, ParallelUtilities::SchedulingPolicy::SP_CONSTANT, WorkFun,
       SkipPredicate, "elimininate-unreachable");
 
-  if (DeletedBlocks)
+  // if (DeletedBlocks)
     outs() << "BOLT-INFO: UCE removed " << DeletedBlocks << " blocks and "
            << DeletedBytes << " bytes of code\n";
 }
@@ -1664,7 +1671,7 @@ void StripRepRet::runOnFunctions(BinaryContext &BC) {
     }
   }
 
-  if (NumBytesSaved)
+  // if (NumBytesSaved)
     outs() << "BOLT-INFO: removed " << NumBytesSaved
            << " 'repz' prefixes"
               " with estimated execution count of "
