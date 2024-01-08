@@ -71,6 +71,7 @@ void FixRISCVCallsPass::runOnFunction(BinaryFunction &BF) {
 void FixRISCVCallsPass::runOnFunctions(BinaryContext &BC) {
   if (!BC.isRISCV() || !BC.HasRelocations)
     return;
+  outs() << "FixRISCVCallsPass runOnFunctions\n";
 
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {
     runOnFunction(BF);

@@ -89,6 +89,7 @@ void LoopInversionPass::runOnFunctions(BinaryContext &BC) {
   if (opts::ReorderBlocks == ReorderBasicBlocks::LT_NONE ||
       opts::LoopReorder == false)
     return;
+  outs() << "LoopInversionPass runOnFunctions\n";
 
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {
     if (runOnFunction(BF))

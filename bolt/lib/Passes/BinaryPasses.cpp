@@ -308,6 +308,7 @@ void NormalizeCFG::runOnFunction(BinaryFunction &BF) {
 
 void NormalizeCFG::runOnFunctions(BinaryContext &BC) {
   if (!opts::NoNormalizeCFG) {
+  outs() << "NormalizeCFG runOnFunctions\n";
   ParallelUtilities::runOnEachFunction(
       BC, ParallelUtilities::SchedulingPolicy::SP_BB_LINEAR,
       [&](BinaryFunction &BF) { runOnFunction(BF); },
@@ -353,6 +354,7 @@ void EliminateUnreachableBlocks::runOnFunction(BinaryFunction &Function) {
 }
 
 void EliminateUnreachableBlocks::runOnFunctions(BinaryContext &BC) {
+  outs() << "EliminateUnreachableBlocks runOnFunctions\n";
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {
     runOnFunction(BF);
   };
@@ -386,6 +388,7 @@ bool ReorderBasicBlocks::shouldOptimize(const BinaryFunction &BF) const {
 void ReorderBasicBlocks::runOnFunctions(BinaryContext &BC) {
   if (opts::ReorderBlocks == ReorderBasicBlocks::LT_NONE)
     return;
+  outs() << "ReorderBasicBlocks runOnFunctions\n";
 
   std::atomic_uint64_t ModifiedFuncCount(0);
   std::mutex FunctionEditDistanceMutex;
@@ -521,6 +524,7 @@ bool ReorderBasicBlocks::modifyFunctionLayout(BinaryFunction &BF,
 }
 
 void FixupBranches::runOnFunctions(BinaryContext &BC) {
+  outs() << "FixupBranches runOnFunctions\n";
   for (auto &It : BC.getBinaryFunctions()) {
     BinaryFunction &Function = It.second;
     if (!BC.shouldEmit(Function) || !Function.isSimple())
@@ -531,6 +535,7 @@ void FixupBranches::runOnFunctions(BinaryContext &BC) {
 }
 
 void FinalizeFunctions::runOnFunctions(BinaryContext &BC) {
+  outs() << "FinalizeFunctions runOnFunctions\n";
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {
     if (!BF.finalizeCFIState()) {
       if (BC.HasRelocations) {
@@ -563,6 +568,7 @@ void CheckLargeFunctions::runOnFunctions(BinaryContext &BC) {
 
   if (!opts::UpdateDebugSections)
     return;
+  outs() << "CheckLargeFunctions runOnFunctions\n";
 
   // If the function wouldn't fit, mark it as non-simple. Otherwise, we may emit
   // incorrect debug info.
@@ -589,6 +595,7 @@ bool CheckLargeFunctions::shouldOptimize(const BinaryFunction &BF) const {
 }
 
 void LowerAnnotations::runOnFunctions(BinaryContext &BC) {
+  outs() << "LowerAnnotations runOnFunctions\n";
   for (BinaryFunction *BF : BC.getAllBinaryFunctions()) {
     for (FunctionFragment &FF : BF->getLayout().fragments()) {
       // Reset at the start of the new fragment.
@@ -640,6 +647,7 @@ void LowerAnnotations::runOnFunctions(BinaryContext &BC) {
 // pass. If an inconsistent state is found (symbol already registered or
 // already defined), clean it.
 void CleanMCState::runOnFunctions(BinaryContext &BC) {
+  outs() << "CleanMCState runOnFunctions\n";
   MCContext &Ctx = *BC.Ctx;
   for (const auto &SymMapEntry : Ctx.getSymbols()) {
     const MCSymbol *S = SymMapEntry.second;
@@ -995,6 +1003,7 @@ uint64_t SimplifyConditionalTailCalls::fixTailCalls(BinaryFunction &BF) {
 void SimplifyConditionalTailCalls::runOnFunctions(BinaryContext &BC) {
   if (!BC.isX86())
     return;
+  outs() << "SimplifyConditionalTailCalls runOnFunctions\n";
 
   for (auto &It : BC.getBinaryFunctions()) {
     BinaryFunction &Function = It.second;
@@ -1052,6 +1061,7 @@ void ShortenInstructions::runOnFunctions(BinaryContext &BC) {
   std::atomic<uint64_t> NumShortened{0};
   if (!BC.isX86())
     return;
+  outs() << "ShortenInstructions runOnFunctions\n";
 
   ParallelUtilities::runOnEachFunction(
       BC, ParallelUtilities::SchedulingPolicy::SP_INST_LINEAR,
@@ -1108,6 +1118,7 @@ void Peepholes::runOnFunctions(BinaryContext &BC) {
                       [](const char A, const PeepholeOpts B) { return A | B; });
   if (Opts == PEEP_NONE)
     return;
+  outs() << "Peepholes runOnFunctions\n";
 
   for (auto &It : BC.getBinaryFunctions()) {
     BinaryFunction &Function = It.second;
@@ -1212,6 +1223,7 @@ bool SimplifyRODataLoads::simplifyRODataLoads(BinaryFunction &BF) {
 }
 
 void SimplifyRODataLoads::runOnFunctions(BinaryContext &BC) {
+  outs() << "SimplifyRODataLoads runOnFunctions\n";
   for (auto &It : BC.getBinaryFunctions()) {
     BinaryFunction &Function = It.second;
     if (shouldOptimize(Function) && simplifyRODataLoads(Function))
@@ -1226,6 +1238,7 @@ void SimplifyRODataLoads::runOnFunctions(BinaryContext &BC) {
 }
 
 void AssignSections::runOnFunctions(BinaryContext &BC) {
+  outs() << "AssignSections runOnFunctions\n";
   for (BinaryFunction *Function : BC.getInjectedBinaryFunctions()) {
     Function->setCodeSectionName(BC.getInjectedCodeSectionName());
     Function->setColdCodeSectionName(BC.getInjectedColdCodeSectionName());
@@ -1257,6 +1270,7 @@ void AssignSections::runOnFunctions(BinaryContext &BC) {
 }
 
 void PrintProfileStats::runOnFunctions(BinaryContext &BC) {
+  outs() << "PrintProfileStats runOnFunctions\n";
   double FlowImbalanceMean = 0.0;
   size_t NumBlocksConsidered = 0;
   double WorstBias = 0.0;
@@ -1350,6 +1364,7 @@ void PrintProfileStats::runOnFunctions(BinaryContext &BC) {
 }
 
 void PrintProgramStats::runOnFunctions(BinaryContext &BC) {
+  outs() << "PrintProgramStats runOnFunctions\n";
   uint64_t NumRegularFunctions = 0;
   uint64_t NumStaleProfileFunctions = 0;
   uint64_t NumAllStaleFunctions = 0;
@@ -1647,6 +1662,7 @@ void PrintProgramStats::runOnFunctions(BinaryContext &BC) {
 }
 
 void InstructionLowering::runOnFunctions(BinaryContext &BC) {
+  outs() << "InstructionLowering runOnFunctions\n";
   for (auto &BFI : BC.getBinaryFunctions())
     for (BinaryBasicBlock &BB : BFI.second)
       for (MCInst &Instruction : BB)
@@ -1656,6 +1672,7 @@ void InstructionLowering::runOnFunctions(BinaryContext &BC) {
 void StripRepRet::runOnFunctions(BinaryContext &BC) {
   if (!BC.isX86())
     return;
+  outs() << "StripRepRet runOnFunctions\n";
 
   uint64_t NumPrefixesRemoved = 0;
   uint64_t NumBytesSaved = 0;
@@ -1681,6 +1698,7 @@ void StripRepRet::runOnFunctions(BinaryContext &BC) {
 void InlineMemcpy::runOnFunctions(BinaryContext &BC) {
   if (!BC.isX86())
     return;
+  outs() << "InlineMemcpy runOnFunctions\n";
 
   uint64_t NumInlined = 0;
   uint64_t NumInlinedDyno = 0;
@@ -1768,6 +1786,7 @@ std::set<size_t> SpecializeMemcpy1::getCallSitesToOptimize(
 void SpecializeMemcpy1::runOnFunctions(BinaryContext &BC) {
   if (!BC.isX86())
     return;
+  outs() << "SpecializeMemcpy1 runOnFunctions\n";
 
   uint64_t NumSpecialized = 0;
   uint64_t NumSpecializedDyno = 0;
@@ -1873,6 +1892,7 @@ void RemoveNops::runOnFunction(BinaryFunction &BF) {
 }
 
 void RemoveNops::runOnFunctions(BinaryContext &BC) {
+  outs() << "RemoveNops runOnFunctions\n";
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {
     runOnFunction(BF);
   };

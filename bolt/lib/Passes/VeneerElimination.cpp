@@ -32,6 +32,7 @@ namespace bolt {
 void VeneerElimination::runOnFunctions(BinaryContext &BC) {
   if (!opts::EliminateVeneers || !BC.isAArch64())
     return;
+  outs() << "VeneerElimination runOnFunctions\n";
 
   std::map<uint64_t, BinaryFunction> &BFs = BC.getBinaryFunctions();
   std::unordered_map<const MCSymbol *, const MCSymbol *> VeneerDestinations;

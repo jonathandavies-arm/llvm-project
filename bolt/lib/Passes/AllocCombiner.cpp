@@ -107,6 +107,8 @@ void AllocCombinerPass::runOnFunctions(BinaryContext &BC) {
   if (opts::FrameOptimization == FOP_NONE)
     return;
 
+  outs() << "AllocCombinerPass runOnFunctions\n";
+
   runForAllWeCare(BC.getBinaryFunctions(), [&](BinaryFunction &Function) {
     combineAdjustments(Function);
   });

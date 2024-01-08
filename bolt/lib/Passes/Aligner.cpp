@@ -151,6 +151,8 @@ void AlignerPass::runOnFunctions(BinaryContext &BC) {
   if (!BC.HasRelocations)
     return;
 
+  outs() << "AlignerPass runOnFunctions\n";
+
   AlignHistogram.resize(opts::BlockAlignment);
 
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {

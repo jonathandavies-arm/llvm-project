@@ -75,6 +75,7 @@ void ValidateMemRefs::runOnFunction(BinaryFunction &BF) {
 void ValidateMemRefs::runOnFunctions(BinaryContext &BC) {
   if (!BC.isX86())
     return;
+  outs() << "ValidateMemRefs runOnFunctions\n";
 
   // Skip validation if not moving JT
   if (opts::JumpTables == JTS_NONE || opts::JumpTables == JTS_BASIC)

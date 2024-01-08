@@ -50,6 +50,7 @@ void FixRelaxations::runOnFunction(BinaryFunction &BF) {
 void FixRelaxations::runOnFunctions(BinaryContext &BC) {
   if (!BC.isAArch64() || !BC.HasRelocations)
     return;
+  outs() << "FixRelaxations runOnFunctions\n";
 
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {
     runOnFunction(BF);

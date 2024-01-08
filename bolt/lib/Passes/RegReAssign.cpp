@@ -453,6 +453,7 @@ void RegReAssign::setupConservativePass(
 }
 
 void RegReAssign::runOnFunctions(BinaryContext &BC) {
+  outs() << "RegReAssign runOnFunctions\n";
   RegScore = std::vector<int64_t>(BC.MRI->getNumRegs(), 0);
   RankedRegs = std::vector<size_t>(BC.MRI->getNumRegs(), 0);
 

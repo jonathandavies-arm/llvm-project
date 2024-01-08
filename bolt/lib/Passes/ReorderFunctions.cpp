@@ -261,6 +261,7 @@ void ReorderFunctions::runOnFunctions(BinaryContext &BC) {
   if (opts::ReorderFunctions != RT_NONE &&
       opts::ReorderFunctions != RT_EXEC_COUNT &&
       opts::ReorderFunctions != RT_USER) {
+    outs() << "ReorderFunctions runOnFunctions\n";
     Cg = buildCallGraph(
         BC,
         [](const BinaryFunction &BF) {

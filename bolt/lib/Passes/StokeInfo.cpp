@@ -145,6 +145,7 @@ bool StokeInfo::checkFunction(BinaryFunction &BF, DataflowInfoManager &DInfo,
 }
 
 void StokeInfo::runOnFunctions(BinaryContext &BC) {
+  outs() << "StokeInfo runOnFunctions\n";
   outs() << "STOKE-INFO: begin of stoke pass\n";
 
   std::ofstream Outfile;

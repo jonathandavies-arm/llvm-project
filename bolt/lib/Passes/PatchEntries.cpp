@@ -44,6 +44,7 @@ void PatchEntries::runOnFunctions(BinaryContext &BC) {
     if (!NeedsPatching)
       return;
   }
+  outs() << "PatchEntries runOnFunctions\n";
 
   if (opts::Verbosity >= 1)
     outs() << "BOLT-INFO: patching entries in original code\n";
