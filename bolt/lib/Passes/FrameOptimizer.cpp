@@ -224,6 +224,7 @@ void FrameOptimizerPass::removeUnusedStores(const FrameAnalysis &FA,
 void FrameOptimizerPass::runOnFunctions(BinaryContext &BC) {
   if (opts::FrameOptimization == FOP_NONE)
     return;
+  outs() << "FrameOptimizerPass runOnFunctions\n";
 
   std::unique_ptr<BinaryFunctionCallGraph> CG;
   std::unique_ptr<FrameAnalysis> FA;

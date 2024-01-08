@@ -249,6 +249,7 @@ void JTFootprintReduction::optimizeFunction(BinaryFunction &Function,
 void JTFootprintReduction::runOnFunctions(BinaryContext &BC) {
   if (opts::JumpTables == JTS_BASIC && BC.HasRelocations)
     return;
+  outs() << "JTFootprintReduction runOnFunctions\n";
 
   std::unique_ptr<RegAnalysis> RA;
   std::unique_ptr<BinaryFunctionCallGraph> CG;

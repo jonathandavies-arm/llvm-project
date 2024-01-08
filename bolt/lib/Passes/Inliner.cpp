@@ -501,6 +501,7 @@ void Inliner::runOnFunctions(BinaryContext &BC) {
 
   if (!opts::inliningEnabled())
     return;
+  outs() << "Inliner runOnFunctions\n";
 
   bool InlinedOnce;
   unsigned NumIters = 0;

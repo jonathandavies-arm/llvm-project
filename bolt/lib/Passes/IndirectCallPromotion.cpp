@@ -1140,6 +1140,7 @@ void IndirectCallPromotion::printCallsiteInfo(
 void IndirectCallPromotion::runOnFunctions(BinaryContext &BC) {
   if (opts::ICP == ICP_NONE)
     return;
+  outs() << "IndirectCallPromotion runOnFunctions\n";
 
   auto &BFs = BC.getBinaryFunctions();
 

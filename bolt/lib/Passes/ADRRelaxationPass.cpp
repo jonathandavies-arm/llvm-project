@@ -101,6 +101,8 @@ void ADRRelaxationPass::runOnFunctions(BinaryContext &BC) {
   if (!opts::AdrPassOpt || !BC.HasRelocations)
     return;
 
+  outs() << "ADRRelaxationPass runOnFunctions\n";
+
   ParallelUtilities::WorkFuncTy WorkFun = [&](BinaryFunction &BF) {
     runOnFunction(BF);
   };

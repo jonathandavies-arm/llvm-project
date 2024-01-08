@@ -715,6 +715,7 @@ bool SplitFunctions::shouldOptimize(const BinaryFunction &BF) const {
 void SplitFunctions::runOnFunctions(BinaryContext &BC) {
   if (!opts::SplitFunctions)
     return;
+  outs() << "SplitFunctions runOnFunctions\n";
 
   // If split strategy is not CDSplit, then a second run of the pass is not
   // needed after function reordering.

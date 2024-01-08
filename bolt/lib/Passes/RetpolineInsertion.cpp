@@ -274,6 +274,7 @@ IndirectBranchInfo::IndirectBranchInfo(MCInst &Inst, MCPlusBuilder &MIB) {
 void RetpolineInsertion::runOnFunctions(BinaryContext &BC) {
   if (!opts::InsertRetpolines)
     return;
+  outs() << "RetpolineInsertion runOnFunctions\n";
 
   assert(BC.isX86() &&
          "retpoline insertion not supported for target architecture");

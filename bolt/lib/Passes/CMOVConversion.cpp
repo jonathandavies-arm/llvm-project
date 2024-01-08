@@ -272,6 +272,7 @@ void CMOVConversion::runOnFunction(BinaryFunction &Function) {
 }
 
 void CMOVConversion::runOnFunctions(BinaryContext &BC) {
+  outs() << "CMOVConversion runOnFunctions\n";
   for (auto &It : BC.getBinaryFunctions()) {
     BinaryFunction &Function = It.second;
     if (!shouldOptimize(Function))

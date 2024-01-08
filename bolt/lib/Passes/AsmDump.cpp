@@ -238,6 +238,8 @@ void dumpFunction(const BinaryFunction &BF) {
 }
 
 void AsmDumpPass::runOnFunctions(BinaryContext &BC) {
+
+  outs() << "AsmDumpPass runOnFunctions\n";
   for (const auto &BFIt : BC.getBinaryFunctions())
     dumpFunction(BFIt.second);
 }

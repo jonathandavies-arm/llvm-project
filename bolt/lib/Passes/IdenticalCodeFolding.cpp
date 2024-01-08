@@ -342,6 +342,7 @@ namespace llvm {
 namespace bolt {
 
 void IdenticalCodeFolding::runOnFunctions(BinaryContext &BC) {
+  outs() << "IdenticalCodeFolding runOnFunctions\n";
   const size_t OriginalFunctionCount = BC.getBinaryFunctions().size();
   uint64_t NumFunctionsFolded = 0;
   std::atomic<uint64_t> NumJTFunctionsFolded{0};

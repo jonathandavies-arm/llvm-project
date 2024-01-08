@@ -148,6 +148,7 @@ void ThreeWayBranch::runOnFunction(BinaryFunction &Function) {
 }
 
 void ThreeWayBranch::runOnFunctions(BinaryContext &BC) {
+  outs() << "ThreeWayBranch runOnFunctions\n";
   for (auto &It : BC.getBinaryFunctions()) {
     BinaryFunction &Function = It.second;
     if (!shouldRunOnFunction(Function))

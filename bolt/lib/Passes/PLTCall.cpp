@@ -46,6 +46,7 @@ namespace bolt {
 void PLTCall::runOnFunctions(BinaryContext &BC) {
   if (opts::PLT == OT_NONE)
     return;
+  outs() << "PLTCall runOnFunctions\n";
 
   uint64_t NumCallsOptimized = 0;
   for (auto &It : BC.getBinaryFunctions()) {

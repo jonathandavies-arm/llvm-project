@@ -305,6 +305,7 @@ bool ValidateInternalCalls::analyzeFunction(BinaryFunction &Function) const {
 void ValidateInternalCalls::runOnFunctions(BinaryContext &BC) {
   if (!BC.isX86())
     return;
+  outs() << "ValidateInternalCalls runOnFunctions\n";
 
   // Look for functions that need validation. This should be pretty rare.
   std::set<BinaryFunction *> NeedsValidation;

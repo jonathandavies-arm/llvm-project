@@ -629,6 +629,7 @@ bool LongJmpPass::relax(BinaryFunction &Func) {
 }
 
 void LongJmpPass::runOnFunctions(BinaryContext &BC) {
+  outs() << "LongJmpPass runOnFunctions\n";
   outs() << "BOLT-INFO: Starting stub-insertion pass\n";
   std::vector<BinaryFunction *> Sorted = BC.getSortedFunctions();
   bool Modified;

@@ -440,6 +440,7 @@ void ReorderData::runOnFunctions(BinaryContext &BC) {
 
   if (!BC.HasRelocations || opts::ReorderData.empty())
     return;
+  outs() << "ReorderData runOnFunctions\n";
 
   // For now
   if (opts::JumpTables > JTS_BASIC) {

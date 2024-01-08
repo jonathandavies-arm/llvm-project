@@ -71,6 +71,7 @@ public:
   bool shouldPrint(const BinaryFunction &BF) const override { return false; }
 
   void runOnFunctions(BinaryContext &BC) override {
+  outs() << "DynoStatsPrintPass runOnFunctions\n";
     const DynoStats NewDynoStats =
         getDynoStats(BC.getBinaryFunctions(), BC.isAArch64());
     const bool Changed = (NewDynoStats != PrevDynoStats);
