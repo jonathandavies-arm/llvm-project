@@ -223,6 +223,16 @@ static cl::opt<unsigned> TopCalledLimit(
              "functions section"),
     cl::init(100), cl::Hidden, cl::cat(BoltCategory));
 
+static llvm::cl::opt<bool>
+    FixupBranches("fixup-branches",
+                     cl::desc("run veneer elimination pass"), cl::init(false),
+                     cl::Hidden, cl::cat(BoltOptCategory));
+
+static llvm::cl::opt<bool>
+    AssignSections("assign-sections",
+                     cl::desc("run veneer elimination pass"), cl::init(false),
+                     cl::Hidden, cl::cat(BoltOptCategory));
+
 } // namespace opts
 
 namespace llvm {
@@ -524,6 +534,9 @@ bool ReorderBasicBlocks::modifyFunctionLayout(BinaryFunction &BF,
 }
 
 void FixupBranches::runOnFunctions(BinaryContext &BC) {
+  if (!opts::FixupBranches) {
+    return;
+  }
   outs() << "FixupBranches runOnFunctions\n";
   for (auto &It : BC.getBinaryFunctions()) {
     BinaryFunction &Function = It.second;
@@ -1238,6 +1251,9 @@ void SimplifyRODataLoads::runOnFunctions(BinaryContext &BC) {
 }
 
 void AssignSections::runOnFunctions(BinaryContext &BC) {
+  if (!opts::AssignSections) {
+    return;
+  }
   outs() << "AssignSections runOnFunctions\n";
   for (BinaryFunction *Function : BC.getInjectedBinaryFunctions()) {
     Function->setCodeSectionName(BC.getInjectedCodeSectionName());

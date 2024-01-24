@@ -3,6 +3,16 @@
 
 using namespace llvm;
 
+namespace opts {
+
+extern cl::OptionCategory BoltOptCategory;
+
+static llvm::cl::opt<bool>
+    FixRelaxations("fix-relaxations",
+                     cl::desc("fix-relaxations"), cl::init(false),
+                     cl::Hidden, cl::cat(BoltOptCategory));
+} // namespace opts
+
 namespace llvm {
 namespace bolt {
 
@@ -48,7 +58,7 @@ void FixRelaxations::runOnFunction(BinaryFunction &BF) {
 }
 
 void FixRelaxations::runOnFunctions(BinaryContext &BC) {
-  if (!BC.isAArch64() || !BC.HasRelocations)
+  if (!BC.isAArch64() || !BC.HasRelocations || !opts::FixRelaxations)
     return;
   outs() << "FixRelaxations runOnFunctions\n";
 

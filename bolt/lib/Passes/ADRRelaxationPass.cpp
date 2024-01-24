@@ -23,7 +23,7 @@ extern cl::OptionCategory BoltCategory;
 static cl::opt<bool>
     AdrPassOpt("adr-relaxation",
                cl::desc("Replace ARM non-local ADR instructions with ADRP"),
-               cl::init(true), cl::cat(BoltCategory), cl::ReallyHidden);
+               cl::init(false), cl::cat(BoltCategory), cl::ReallyHidden);
 } // namespace opts
 
 namespace llvm {

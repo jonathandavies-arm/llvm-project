@@ -151,7 +151,9 @@ void AlignerPass::runOnFunctions(BinaryContext &BC) {
   if (!BC.HasRelocations)
     return;
 
-  outs() << "AlignerPass runOnFunctions\n";
+  if (opts::AlignBlocks && !opts::PreserveBlocksAlignment) {
+    outs() << "AlignerPass runOnFunctions\n";
+  }
 
   AlignHistogram.resize(opts::BlockAlignment);
 
