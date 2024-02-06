@@ -52,6 +52,11 @@ static cl::opt<std::string>
                       cl::cat(AggregatorCategory));
 
 static cl::opt<bool>
+    SPEAggregation("spe-brstacks",
+                     cl::desc("Generate LBR info from perf SPE data"),
+                     cl::cat(AggregatorCategory));
+
+static cl::opt<bool>
 FilterMemProfile("filter-mem-profile",
   cl::desc("if processing a memory profile, filter out stack or heap accesses "
            "that won't be useful for BOLT to reduce profile file size"),
@@ -179,6 +184,11 @@ void DataAggregator::start() {
     launchPerfProcess("branch events with itrace", MainEventsPPI,
                       ItracePerfScriptArgs.c_str(),
                       /*Wait = */ false);
+  } else if (opts::SPEAggregation) {
+    launchPerfProcess("branch events with SPE", MainEventsPPI,
+                      "script -F pid,ip,brstack --spe-brstacks",
+                      /*Wait = */ false);
+    outs() << MainEventsPPI.StdoutPath.data() << "\n";
   } else {
     launchPerfProcess("branch events",
                       MainEventsPPI,
