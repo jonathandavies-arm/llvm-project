@@ -61,7 +61,7 @@ public:
   Error setProfile(StringRef Filename);
 
   /// Run all the necessary steps to read, optimize and rewrite the binary.
-  Error run();
+  Error run(bool check_cfi=false);
 
   /// Diff this instance against another one. Non-const since we may run passes
   /// to fold identical functions.
@@ -94,6 +94,8 @@ public:
   }
 
 private:
+  Error cfi();
+
   /// Populate array of binary functions and other objects of interest
   /// from meta data in the file.
   void discoverFileObjects();

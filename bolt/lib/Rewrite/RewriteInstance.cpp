@@ -58,6 +58,7 @@
 #include "llvm/Support/Timer.h"
 #include "llvm/Support/ToolOutputFile.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/MC/MCDwarf.h"
 #include <algorithm>
 #include <fstream>
 #include <memory>
@@ -707,7 +708,32 @@ void RewriteInstance::patchBuildID() {
   BC->outs() << "BOLT-INFO: patched build-id (flipped last bit)\n";
 }
 
-Error RewriteInstance::run() {
+bool isUnsupportedCFI(MCCFIInstruction::OpType type) {
+  return type == MCCFIInstruction::OpAdjustCfaOffset || type == MCCFIInstruction::OpWindowSave || type == MCCFIInstruction::OpNegateRAState || type == MCCFIInstruction::OpLLVMDefAspaceCfa;
+}
+
+Error RewriteInstance::cfi() {
+  std::map<uint64_t, BinaryFunction>& BFS = BC->getBinaryFunctions();
+  for (auto &BFI : BC->getBinaryFunctions()) {
+    BinaryFunction &func = BFI.second;
+    const BinaryFunction::CFIInstrMapType &FDE = func.getFDEProgram();
+    int unsupported_cfi = 0;
+    for (MCCFIInstruction Instr : FDE) {
+      MCCFIInstruction::OpType type = Instr.getOperation();
+      if (isUnsupportedCFI(type)) {
+        ++unsupported_cfi;
+      }
+    }
+    if (unsupported_cfi) {
+      outs() << "Unsupported CFI Func: " << func.getPrintName() << " Num: " << unsupported_cfi << "\n";
+
+    }
+  }
+
+  return Error::success();
+}
+
+Error RewriteInstance::run(bool check_cfi) {
   assert(BC && "failed to create a binary context");
 
   BC->outs() << "BOLT-INFO: Target architecture: "
@@ -743,6 +769,10 @@ Error RewriteInstance::run() {
   disassembleFunctions();
 
   processMetadataPreCFG();
+
+  if (check_cfi) {
+    return cfi();
+  }
 
   buildFunctionsCFG();
 
