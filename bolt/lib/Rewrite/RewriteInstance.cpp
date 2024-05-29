@@ -713,6 +713,7 @@ bool isUnsupportedCFI(MCCFIInstruction::OpType type) {
 }
 
 Error RewriteInstance::cfi() {
+  int total_unsupported_cfi = 0;
   std::map<uint64_t, BinaryFunction>& BFS = BC->getBinaryFunctions();
   for (auto &BFI : BC->getBinaryFunctions()) {
     BinaryFunction &func = BFI.second;
@@ -726,9 +727,10 @@ Error RewriteInstance::cfi() {
     }
     if (unsupported_cfi) {
       outs() << "Unsupported CFI Func: " << func.getPrintName() << " Num: " << unsupported_cfi << "\n";
-
+      total_unsupported_cfi += unsupported_cfi;
     }
   }
+  outs() << "Total Unsupported CFI: " << total_unsupported_cfi << "\n";
 
   return Error::success();
 }
