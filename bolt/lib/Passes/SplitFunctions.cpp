@@ -624,6 +624,7 @@ struct SplitRandom2 final : public SplitStrategy {
     const auto LastSplitPoint = std::max<DiffT>(NumBlocks - 1, 1);
     std::uniform_int_distribution<DiffT> Dist(1, LastSplitPoint);
     const DiffT SplitPoint = Dist(Gen);
+    outs() << "SplitRandom2 num: " << NumBlocks << " split point: " << SplitPoint << "\n";
     for (BinaryBasicBlock *BB : llvm::make_range(Start + SplitPoint, End))
       BB->setFragmentNum(FragmentNum::cold());
 
@@ -668,12 +669,17 @@ struct SplitRandomN final : public SplitStrategy {
     // Add one past the end entry to lottery
     Lottery.push_back(NumBlocks);
 
+    if (NumSplits) outs() << "SplitRandomN NumBlocks: " << NumBlocks << " NumSplits: " << NumSplits << " Split Points:";
+
     unsigned LotteryIndex = 0;
     unsigned BBPos = 0;
     for (BinaryBasicBlock *const BB : make_range(Start, End)) {
       // Check whether to start new fragment
-      if (BBPos >= Lottery[LotteryIndex])
+      if (BBPos >= Lottery[LotteryIndex]) {
         ++LotteryIndex;
+        if (NumSplits) outs() << " " << BBPos;
+      }
+
 
       // Because LotteryIndex is 0 based and cold fragments are 1 based, we can
       // use the index to assign fragments.
@@ -681,6 +687,8 @@ struct SplitRandomN final : public SplitStrategy {
 
       ++BBPos;
     }
+    if (NumSplits) outs() << "\n";
+
   }
 };
 

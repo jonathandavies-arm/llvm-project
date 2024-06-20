@@ -89,18 +89,18 @@ void ClusterAlgorithm::computeClusterAverageFrequency(const BinaryContext &BC) {
 }
 
 void ClusterAlgorithm::printClusters() const {
-  for (uint32_t I = 0, E = Clusters.size(); I < E; ++I) {
-    errs() << "Cluster number " << I;
-    if (AvgFreq.size() == Clusters.size())
-      errs() << " (frequency: " << AvgFreq[I] << ")";
-    errs() << " : ";
-    const char *Sep = "";
-    for (const BinaryBasicBlock *BB : Clusters[I]) {
-      errs() << Sep << BB->getName();
-      Sep = ", ";
-    }
-    errs() << "\n";
-  }
+  // for (uint32_t I = 0, E = Clusters.size(); I < E; ++I) {
+  //   errs() << "Cluster number " << I;
+  //   if (AvgFreq.size() == Clusters.size())
+  //     errs() << " (frequency: " << AvgFreq[I] << ")";
+  //   errs() << " : ";
+  //   const char *Sep = "";
+  //   for (const BinaryBasicBlock *BB : Clusters[I]) {
+  //     errs() << Sep << BB->getName();
+  //     Sep = ", ";
+  //   }
+  //   errs() << "\n";
+  // }
 }
 
 void ClusterAlgorithm::reset() {
@@ -757,17 +757,28 @@ void RandomClusterReorderAlgorithm::reorderBasicBlocks(
     if (!Clusters[I].empty())
       ClusterOrder.push_back(I);
 
+  if (opts::PrintClusters) {
+    outs() << "Old cluster order: ";
+    const char *Sep = "";
+    for (uint32_t O : ClusterOrder) {
+      outs() << Sep << O;
+      Sep = ", ";
+    }
+    outs() << '\n';
+  }
+
   std::shuffle(std::next(ClusterOrder.begin()), ClusterOrder.end(),
                std::default_random_engine(opts::RandomSeed.getValue()));
 
   if (opts::PrintClusters) {
-    errs() << "New cluster order: ";
+    outs() << "New cluster order: ";
     const char *Sep = "";
     for (uint32_t O : ClusterOrder) {
-      errs() << Sep << O;
+      outs() << Sep << O;
       Sep = ", ";
     }
-    errs() << '\n';
+    outs() << '\n';
+    outs() << '\n';
   }
 
   // Arrange basic blocks according to cluster order.

@@ -18,6 +18,8 @@
 #include "llvm/Transforms/Utils/CodeLayout.h"
 #include <fstream>
 
+#include "boost/functional/hash.hpp"
+
 #define DEBUG_TYPE "hfsort"
 
 using namespace llvm;
@@ -254,6 +256,15 @@ void ReorderFunctions::printStats(BinaryContext &BC,
                   TotalCalls2MB, 100 * TotalCalls2MB / TotalCalls);
 }
 
+size_t hash_value(const std::vector<int>& vec)
+{
+    std::size_t seed = 0;
+    for (const auto& val : vec) {
+      boost::hash_combine(seed, val);
+    }
+    return seed;
+};
+
 Error ReorderFunctions::readFunctionOrderFile(
     std::vector<std::string> &FunctionNames) {
   std::ifstream FuncsFile(opts::FunctionOrderFile, std::ios::in);
@@ -287,6 +298,11 @@ Error ReorderFunctions::runOnFunctions(BinaryContext &BC) {
         opts::CgUseSplitHotSize, opts::UseEdgeCounts,
         opts::CgIgnoreRecursiveCalls);
     Cg.normalizeArcWeights();
+    int samples = 0;
+    for (auto node : Cg.nodes()) {
+      samples += node.samples();
+    }
+    outs() << "Total samples: " << samples << "\n";
   }
 
   std::vector<Cluster> Clusters;
@@ -330,6 +346,11 @@ Error ReorderFunctions::runOnFunctions(BinaryContext &BC) {
   } break;
   case RT_HFSORT:
     Clusters = clusterize(Cg);
+    if (Clusters.size()) {
+      outs() << Clusters[0].toString() << "\n";
+    } else {
+      outs() << "RT_HFSORT: None\n";
+    }
     break;
   case RT_CDSORT: {
     // It is required that the sum of incoming arc weights is not greater
@@ -366,6 +387,11 @@ Error ReorderFunctions::runOnFunctions(BinaryContext &BC) {
   case RT_RANDOM:
     std::srand(opts::RandomSeed);
     Clusters = randomClusters(Cg);
+    if (Clusters.size()) {
+      outs() << Clusters[0].toString() << "\n";
+    } else {
+      outs() << "RT_RANDOM: None\n";
+    }
     break;
   case RT_USER: {
     // Build LTOCommonNameMap
@@ -441,7 +467,29 @@ Error ReorderFunctions::runOnFunctions(BinaryContext &BC) {
     llvm_unreachable("unexpected layout type");
   }
 
+  outs() << "Clusters.size() " << Clusters.size() << "\n";
+  outs() << "BFs.size() " << BFs.size() << "\n";
+
+
+  
+
+  // int count = 0;
+  std::vector<int> indexes_before;
+  std::vector<int> indexes_after;
+  for (auto &It : BFs) {
+    BinaryFunction &BF = It.second;
+    indexes_before.push_back(BF.getIndex());
+  }
+
+
   reorder(BC, std::move(Clusters), BFs);
+
+  for (auto &It : BFs) {
+    BinaryFunction &BF = It.second;
+    indexes_after.push_back(BF.getIndex());
+  }
+  outs() << "Hash before: " << hash_value(indexes_before) << "\n";
+  outs() << "Hash after: " << hash_value(indexes_after) << "\n";
 
   BC.HasFinalizedFunctionOrder = true;
 

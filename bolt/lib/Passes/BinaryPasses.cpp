@@ -468,8 +468,12 @@ bool ReorderBasicBlocks::modifyFunctionLayout(BinaryFunction &BF,
   std::unique_ptr<ReorderAlgorithm> Algo;
 
   // Cannot do optimal layout without profile.
-  if (Type != LT_REVERSE && !BF.hasValidProfile())
-    return false;
+  if (Type != LT_OPTIMIZE_SHUFFLE) {
+    if (Type != LT_REVERSE && !BF.hasValidProfile()) {
+      outs() << "No valid profile\n";
+      return false;
+    }
+  }
 
   if (Type == LT_REVERSE) {
     Algo.reset(new ReverseReorderAlgorithm());

@@ -243,9 +243,15 @@ std::vector<Cluster> randomClusters(const CallGraph &Cg) {
   std::vector<Cluster> Clusters;
   Clusters.reserve(Cg.numNodes());
 
+  // outs() << "Total Clusters " << Cg.numNodes() << "\n";
+
+  // for (auto node : Cg.nodes()) {
+  //   outs() << "Node samples: " << node.samples() << "\n";
+  // }
+
   for (NodeId F = 0; F < Cg.numNodes(); F++) {
-    if (Cg.samples(F) == 0)
-      continue;
+    // if (Cg.samples(F) == 0)
+    //   continue;
     Clusters.emplace_back(F, Cg.getNode(F));
   }
 
